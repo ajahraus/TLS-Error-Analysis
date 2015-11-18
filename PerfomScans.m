@@ -3,7 +3,7 @@ clear
 close all
 clc
 
-newClouds = ScanAndRegisterFromFiles('kuukpak scan models.txt','kuukpak planar model.txt','kuukpak sphere models.txt');
+newClouds = ScanAndRegisterFromFiles('kuukpak scan models.txt','kuukpak planar model.txt','kuukpak sphere models.txt',1);
 
 
 %% Plot Clouds in common coodinate system
