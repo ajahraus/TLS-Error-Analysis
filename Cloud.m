@@ -488,7 +488,7 @@ classdef Cloud
             %                 C_L(i,i) = sum(obj.varXYZ(i,:));
             %             end
             
-            C_L = diag(sum(obj.varXYZ,2));
+            C_L = diag(sum(obj.varXYZ,2))+(sd^2 * eye(size(C_L)));
             C_L_inv = pinv(C_L);
             
             converged=0;
