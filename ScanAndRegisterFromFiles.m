@@ -1,9 +1,11 @@
 function newClouds = ScanAndRegisterFromFiles(varargin)
-% newClouds = ScanAndRegisterFromFiles(varargin)
+% newClouds = ScanAndRegisterFromFiles(scanfilename, planesfilename, spheresfilename [, homescanindex])
 % This function takes in the file names of the scanners, planes and spheres
 % to be used in a virtual scan and registration. It performs the scan,
 % registers them together, and returns an array of Cloud objects which
 % contain all of the spatial and statistical information of the clouds.
+% Specifying a fourth input argument allows the user to specify the home
+% scan index. If none is provided, then it is assumed to be 1. 
 
 scanFileName = varargin{1};
 planesFileName  = varargin{2};
