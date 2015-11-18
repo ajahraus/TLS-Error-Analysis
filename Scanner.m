@@ -32,7 +32,7 @@ classdef Scanner
                     obj.horizontalRange = [-pi,pi];
                     obj.maxDistance = 120;
                     obj.angularIncrement = 0.009*pi/180 * 4; % Less thas this and things start to crash
-                    obj.obsStd = [1.7e-3, 3.2e-4, 2.2e-4]; 
+                    obj.obsStd = [1.7e-3, 3.2e-4, 2.2e-4]; % meters, radians, radians
                     obj.levelStd = [1.8e-4, 1.8e-4, 0];
                     obj.regParams = zeros(6,1);
                     obj.regParamVarCovar = zeros(6);
