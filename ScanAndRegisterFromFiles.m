@@ -21,7 +21,7 @@ scannersRaw = load(scanFileName);
 
 for i = 1:size(scannersRaw,1)
     scan(i) = Scanner(scannersRaw(i,1:3),scannersRaw(i,4:6));
-%     scan(i).angularIncrement = scan(i).angularIncrement*4;
+    scan(i).angularIncrement = scan(i).angularIncrement*2;
     
     disp(['Scan number ',num2str(i)])
     tic
