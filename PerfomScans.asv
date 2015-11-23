@@ -40,4 +40,4 @@ disp(mean(sqrt(allVariances))*1000)
 
 %%
 
-displayCloudsFromArray(newClouds)
+displayCloudsFromArray(cloudArray)
