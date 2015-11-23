@@ -1,10 +1,9 @@
-% Scanning Script
+%Scanning Script
 clear
 close all
 clc
 
 newClouds = ScanAndRegisterFromFiles('kuukpak scan models.txt','kuukpak planar model.txt','kuukpak sphere models.txt',1);
-
 
 %% Plot Clouds in common coodinate system
 figure, hold on
@@ -38,6 +37,6 @@ end
 disp('Mean Standard Deviation of X, Y, Z post registration for all clouds(mm):')
 disp(mean(sqrt(allVariances))*1000)
 
-%%
+%
 
-displayCloudsFromArray(newClouds)
+d = displayCloudsFromArray(newClouds,10);
