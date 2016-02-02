@@ -10,6 +10,7 @@ classdef Cloud
         errXYZ;
         errRTA;
         scan;
+        maxRegSTD;
     end
     
     methods
@@ -565,12 +566,13 @@ classdef Cloud
             
         end
         
-        function varRegXYZ = propRegErrors(obj)
+        function [varRegXYZ, maxRegSTD] = propRegErrors(obj)
             % This function takes the xyz coordinates of a cloud, as well
             % as the registration parameters and associated variances and
             % calculates the variances of the xyz coordinates after
             % registration.
             varRegXYZ = zeros(size(obj.XYZ));
+            maxRegSTD = zeros(size(obj.XYZ,1),1);
             
             for i = 1:length(obj.XYZ)
                 
@@ -608,6 +610,10 @@ classdef Cloud
                 C_x = A * C_L * A';
                 
                 varRegXYZ(i,:) = diag(C_x)';
+                
+                maxVar3 = eig(C_x);
+                maxRegSTD(i) = sqrt(maxVar3(1));
+                
             end
             
         end

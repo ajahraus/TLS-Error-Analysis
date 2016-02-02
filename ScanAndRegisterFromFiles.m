@@ -41,11 +41,12 @@ for i = 1:length(scan)
         newClouds(i).varRTA = clouds(i).varRTA;
         newClouds(i).errXYZ = clouds(i).errXYZ;
         newClouds(i).errRTA = clouds(i).errRTA;
-        newClouds(i).varRegXYZ = newClouds(i).propRegErrors();
+        [newClouds(i).varRegXYZ, newClouds(i).maxRegSTD] = newClouds(i).propRegErrors();
     else
         newClouds(i) = clouds(i);
         newClouds(i).regXYZ = newClouds(i).XYZ;
         newClouds(i).varRegXYZ = newClouds(i).varXYZ;
+        newClouds(i).maxRegSTD = max(newClouds(i).varXYZ,[],2);
     end
     
 end

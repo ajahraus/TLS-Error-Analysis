@@ -37,6 +37,22 @@ end
 disp('Mean Standard Deviation of X, Y, Z post registration for all clouds(mm):')
 disp(mean(sqrt(allVariances))*1000)
 
-%
+%%
 
 d = displayCloudsFromArray(newClouds,10);
+
+%% output pts
+
+
+fid = fopen('TLSPointCloud.pts','w');
+
+for i =  1:length(newClouds)
+    for j = 1:length(newClouds(i).regXYZ)
+        outputString = [num2str(newClouds(i).regXYZ(j,1)),', ',num2str(newClouds(i).regXYZ(j,2)),...
+            ', ',num2str(newClouds(i).regXYZ(j,3)),', ',num2str(newClouds(i).maxRegSTD(j)),'\n'];
+        if newClouds(i).maxRegSTD(j) ~= 0;
+            fprintf(fid,outputString);
+        end
+    end
+end
+fclose(fid);

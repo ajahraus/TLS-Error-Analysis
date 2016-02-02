@@ -1,15 +1,13 @@
 function indexes = displayCloudsFromArray(cloudArray,numOfCategories)
 
 regXYZ = [];
-varRegXYZ = [];
+maxRegSTD = [];
 for i = 1:length(cloudArray)
     regXYZ = [regXYZ; cloudArray(i).regXYZ];
-    varRegXYZ = [varRegXYZ; cloudArray(i).varRegXYZ];    
+    maxRegSTD = [maxRegSTD; cloudArray(i).maxRegSTD];    
 end
 
-totalDev = sqrt(sum(varRegXYZ,2));
-
-data1 = sortrows([totalDev,regXYZ]);
+data1 = sortrows([maxRegSTD,regXYZ]);
 
 normalizedDistance = abs((data1(:,1) - mean(data1(:,1)))./std(data1(:,1)));
 key = normalizedDistance<3;
