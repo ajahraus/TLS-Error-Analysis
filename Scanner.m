@@ -208,7 +208,7 @@ classdef Scanner
             
             
             % Calculate angle of incidence
-            incidence = zeros(size(RTA,1),1);
+%             incidence = zeros(size(RTA,1),1);
             
             %             for i = 1:length(incidence)
             %                 incidence(i) = acos(dot(n, -[cos(RTA(i,2)).*cos(RTA(i,3)),sin(RTA(i,2)).*cos(RTA(i,3)), sin(RTA(i,3))]));

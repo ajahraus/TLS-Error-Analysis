@@ -28,14 +28,22 @@ end
 
 %%
 allVariances = [];
+RegErrs = [];
+
 for i = 1:length(newClouds)
     allVariances = [allVariances; newClouds(i).varRegXYZ];
     disp(['Mean Standard Deviation of X, Y, Z post registration (mm) for cloud number ', num2str(i), ':'])
     disp(mean(sqrt(newClouds(i).varRegXYZ))*1000)
+    RegErrs = [RegErrs;  newClouds(i).maxRegSTD];
 end
 
 disp('Mean Standard Deviation of X, Y, Z post registration for all clouds(mm):')
 disp(mean(sqrt(allVariances))*1000)
+
+
+%%
+figure, subplot(1,2,1), hist(RegErrs,100), title('Max Errors per point'), xlabel('Meters')
+subplot(1,2,2), hist(log10(RegErrs),100), title('Log of Max Errors per point'), xlabel('Log of Meters')
 
 %%
 
@@ -43,16 +51,17 @@ disp(mean(sqrt(allVariances))*1000)
 
 %% output pts
 
-
-fid = fopen('TLSPointCloud.pts','w');
-
-for i =  1:length(newClouds)
-    for j = 1:length(newClouds(i).GLOBALXYZ)
-        outputString = [num2str(newClouds(i).GLOBALXYZ(j,1)),', ',num2str(newClouds(i).GLOBALXYZ(j,2)),...
-            ', ',num2str(newClouds(i).GLOBALXYZ(j,3)),', ',num2str(newClouds(i).maxRegSTD(j)),'\n'];
-        if newClouds(i).maxRegSTD(j) ~= 0;
-            fprintf(fid,outputString);
+if 1
+    fid = fopen('TLSPointCloud.pts','w');
+    
+    for i =  1:length(newClouds)
+        for j = 1:length(newClouds(i).GLOBALXYZ)
+            outputString = [num2str(newClouds(i).GLOBALXYZ(j,1)),', ',num2str(newClouds(i).GLOBALXYZ(j,2)),...
+                ', ',num2str(newClouds(i).GLOBALXYZ(j,3)),', ',num2str(newClouds(i).maxRegSTD(j)),'\n'];
+            if newClouds(i).maxRegSTD(j) ~= 0;
+                fprintf(fid,outputString);
+            end
         end
     end
+    fclose(fid);
 end
-fclose(fid);
