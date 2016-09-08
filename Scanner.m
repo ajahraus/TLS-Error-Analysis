@@ -454,9 +454,6 @@ classdef Scanner
             end
             
             if ~isa(var,'Plane')
-                %%%% Delete this later on, for testing purposes only %%%%
-                %                 var = var/5;
-                %%%% This concludes the deleting section %%%%
                 
                 numPlanes = size(var,1)/3;
                 
@@ -478,14 +475,6 @@ classdef Scanner
             
             for k = 1:numPlanes
                 
-                plane_in_question =[ 5.262, 3.369, -2.016;...
-                    7.115, 3.527, -2.810;...
-                    1.157, 7.482, -0.891];
-                
-                if AllPlanes(k).vertexs == plane_in_question
-                    %                     disp(['You are looking for plane number ', num2str(k)]);
-                end
-                
                 
                 tempCloud = ScanPlane(obj, AllPlanes(k));
                 tcloud = [tcloud; tempCloud.XYZ;];
@@ -494,7 +483,7 @@ classdef Scanner
                 
                 terrRTA = [terrRTA; tempCloud.errRTA];
                 terrXYZ = [terrXYZ; tempCloud.errXYZ];
-                %                 AllClouds = AllClouds.combineClouds(tempCloud);
+
                 clear tempCloud
             end
             
@@ -553,7 +542,6 @@ classdef Scanner
                 
                 terrRTA = [terrRTA; tempCloud.errRTA];
                 terrXYZ = [terrXYZ; tempCloud.errXYZ];
-                %                 AllClouds = AllClouds.combineClouds(tempCloud);
                 clear tempCloud
             end
             
@@ -708,7 +696,6 @@ classdef Scanner
             params = [];
             for i = 1:length(movingSC)
                 [R{i},t{i}]= HornsRegistrationColumns(movingSC{i},HomeSCMulti{i});
-                %     check = HomeSC -( R{i}*movingSC{i} + repmat(t{i},1,size(movingSC{i},2)))
                 params =[params;[t{i}; atan2(-R{i}(3,2),R{i}(3,3)); asin(R{i}(3,1)); atan2(-R{i}(2,1),R{i}(1,1))]];
             end
             
