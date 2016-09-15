@@ -267,9 +267,11 @@ classdef Scanner
             end
             
             % Determine angular footprint of the target
-            SFP = atan2(sphere.radius,norm(sphere.center - S));
+            
             
             temp = Cloud(sphere.center,obj,'globalxyz');
+            
+            SFP = asin(sphere.radius/norm(temp.XYZ));
             
             SCang = temp.RTA;
             inc = obj.angularIncrement;
