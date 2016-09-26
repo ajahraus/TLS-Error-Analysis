@@ -443,6 +443,8 @@ classdef Cloud
             % the xyz position.
             
             xyz = obj.XYZ;
+            varCovar = VarianceCalculationSphereCell(obj.scan, obj, sphere);
+            
             sphereCenterCloud = Cloud(sphere.center,obj.scan,'GlobalXYZ');
             TrueCenter = sphereCenterCloud.XYZ;
             
@@ -489,7 +491,25 @@ classdef Cloud
             %                 C_L(i,i) = sum(obj.varXYZ(i,:));
             %             end
             
-            C_L = diag(sum(obj.varXYZ,2));
+%             C_L = diag(sum(obj.varXYZ,2));
+
+%             C_L = [];
+            for i = 1:length(varCovar)
+                x=xyz(i,1);
+                y=xyz(i,2);
+                z=xyz(i,3);
+
+                dx=x-xc;
+                dy=y-yc;
+                dz=z-zc;
+
+                A(1,1) = 2*dx;
+                A(1,2) = 2*dy;
+                A(1,3) = 2*dz;
+                
+                C_L(i,i) = A * varCovar{i} * A';
+            end
+            clear A
             C_L_inv = pinv(C_L);
             
             converged=0;
@@ -561,8 +581,8 @@ classdef Cloud
             % to be more rigorous by including the co-variances between
             % the object point coordinates. 
             
-            varCovar = VarianceCalculationSphereCell(obj.scan, obj, sphere);
             xyz = obj.XYZ;
+            varCovar = VarianceCalculationSphereCell(obj.scan, obj, sphere);
             
             sphereCenterCloud = Cloud(sphere.center,obj.scan,'GlobalXYZ');
             TrueCenter = sphereCenterCloud.XYZ;
@@ -706,7 +726,7 @@ classdef Cloud
             
             for i = 1:numSpheres
                 sphereCloud = obj.collectSpherePoints(AllSpheres(i));
-                [estSphereCenters(i,:),sphereVariances(i,:)] = sphereCloud.modelSphereAdvanced(AllSpheres(i));
+                [estSphereCenters(i,:),sphereVariances(i,:)] = sphereCloud.modelSphere(AllSpheres(i));
             end
             
         end
