@@ -449,18 +449,9 @@ classdef Scanner
             SCcloud = Cloud(sphere.center,obj,'GlobalXYZ');
             SC = SCcloud.XYZ;
             
-            if exist(cloud.errRTA)
-                RTA = cloud.RTA-errRTA;
-            else
-                RTA = cloud.RTA;
-            end
-            
+            RTA = cloud.RTA;
             % Calculate xyz of points
-            if exist(cloud.errXYZ)
-                xyz = cloud.XYZ-errXYZ;
-            else
-                xyz = cloud.XYZ;
-            end
+            xyz = cloud.XYZ;
             
             % Calculate angle of incidence
             

@@ -561,9 +561,12 @@ classdef Cloud
             % to be more rigorous by including the co-variances between
             % the object point coordinates. 
             
+            varCovar = VarianceCalculationSphereCell(obj.scan, obj, sphere);
             xyz = obj.XYZ;
+            
             sphereCenterCloud = Cloud(sphere.center,obj.scan,'GlobalXYZ');
             TrueCenter = sphereCenterCloud.XYZ;
+            
             
             % contrain the radius to the known value
             rcon = sphere.radius;
@@ -598,23 +601,22 @@ classdef Cloud
             end
             
             % order: xc yc zc r
-            C_L = zeros(size(obj.XYZ,1));
             x0=[ xc yc zc r ]';
             
-            % This calculation of the observation variance may need some
-            % theoretical backing up.
+            % Using varCovar
+            C_L = [];
+            for i = 1:length(varCovar)
+                C_L = blkdiag(C_L, varCovar{i});
+            end
             
-            %             for i = 1:size(obj.XYZ,1);
-            %                 C_L(i,i) = sum(obj.varXYZ(i,:));
-            %             end
-            
-            C_L = diag(sum(obj.varXYZ,2));
             C_L_inv = pinv(C_L);
             
             converged=0;
             for i=1:max_iter
-                A=zeros(n_pt_obs,4);
-                w=zeros(n_pt_obs,1);
+%                 A=zeros(n_pt_obs*3,4);
+%                 w=zeros(n_pt_obs*3,1);
+                A = [];
+                w = [];
                 
                 xc=x0(1);
                 yc=x0(2);
@@ -622,6 +624,9 @@ classdef Cloud
                 r=x0(4);
                 
                 for j=1:n_pt_obs
+                    subA = zeros(3,4);
+                    subw = zeros(3,1);
+                    
                     x=xyz(j,1);
                     y=xyz(j,2);
                     z=xyz(j,3);
@@ -630,12 +635,33 @@ classdef Cloud
                     dy=y-yc;
                     dz=z-zc;
                     
-                    A(j,1)=-2*dx;
-                    A(j,2)=-2*dy;
-                    A(j,3)=-2*dz;
-                    A(j,4)=-2*r;
+                    dnom = sqrt(r^2 - dy^2 - dz^2);
+                    subA(1,1) = 1;
+                    subA(1,2) = dy/dnom;
+                    subA(1,3) = dz/dnom;
+                    subA(1,4) =  r/dnom;
                     
-                    w(j)=dx^2+dy^2+dz^2-r^2;
+                    subw(1) = dnom+xc;
+                    
+                    dnom = sqrt(r^2 - dx^2 - dz^2);
+                    subA(2,1) = dx/dnom;
+                    subA(2,2) = 1;
+                    subA(2,3) = dz/dnom;
+                    subA(2,4) =  r/dnom;
+                    
+                    subw(2) = dnom+yc;
+                    
+                    dnom = sqrt(r^2 - dx^2 - dy^2);
+                    subA(3,1) = dx/dnom;
+                    subA(3,2) = dy/dnom;
+                    subA(3,3) = 1;
+                    subA(3,4) =  r/dnom;
+                    
+                    subw(3) = dnom+zc;
+                    
+                    A = [A;subA]
+                    
+                    w = [w;subw];
                 end
                 
                 N=A'*C_L_inv*A;
