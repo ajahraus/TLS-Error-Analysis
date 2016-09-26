@@ -165,7 +165,7 @@ classdef Cloud
             % This may need some adjusting
             % If the provided scan also has registration parameters,
             % calculate the coordinates of the registered xyz points.
-            if exist(obj.scan,'var') && obj.scan.regParams ~= zeros(6,1)
+            if exist('obj.scan','var') && obj.scan.regParams ~= zeros(6,1)
                 obj.regXYZ = (rotz(obj.scan.regParams(6))*...
                     roty(obj.scan.regParams(5))*rotx(obj.scan.regParams(4))*...
                     (obj.XYZ') + repmat(obj.scan.regParams(1:3),1,size(obj.XYZ,1)))';
@@ -635,7 +635,7 @@ classdef Cloud
                     dy=y-yc;
                     dz=z-zc;
                     
-                    dnom = sqrt(r^2 - dy^2 - dz^2);
+                    dnom = sqrt(abs(r^2 - dy^2 - dz^2));
                     subA(1,1) = 1;
                     subA(1,2) = dy/dnom;
                     subA(1,3) = dz/dnom;
@@ -643,7 +643,7 @@ classdef Cloud
                     
                     subw(1) = dnom+xc;
                     
-                    dnom = sqrt(r^2 - dx^2 - dz^2);
+                    dnom = sqrt(abs(r^2 - dx^2 - dz^2));
                     subA(2,1) = dx/dnom;
                     subA(2,2) = 1;
                     subA(2,3) = dz/dnom;
@@ -651,7 +651,7 @@ classdef Cloud
                     
                     subw(2) = dnom+yc;
                     
-                    dnom = sqrt(r^2 - dx^2 - dy^2);
+                    dnom = sqrt(abs(r^2 - dx^2 - dy^2));
                     subA(3,1) = dx/dnom;
                     subA(3,2) = dy/dnom;
                     subA(3,3) = 1;
@@ -706,7 +706,7 @@ classdef Cloud
             
             for i = 1:numSpheres
                 sphereCloud = obj.collectSpherePoints(AllSpheres(i));
-                [estSphereCenters(i,:),sphereVariances(i,:)] = sphereCloud.modelSphere(AllSpheres(i));
+                [estSphereCenters(i,:),sphereVariances(i,:)] = sphereCloud.modelSphereAdvanced(AllSpheres(i));
             end
             
         end

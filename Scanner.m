@@ -450,14 +450,14 @@ classdef Scanner
             SCcloud = Cloud(sphere.center,obj,'GlobalXYZ');
             SC = SCcloud.XYZ;
             
-            if exist(cloud.errRTA)
+            if exist('cloud.errRTA','var')
                 RTA = cloud.RTA-errRTA;
             else
                 RTA = cloud.RTA;
             end
             
             % Calculate xyz of points
-            if exist(cloud.errXYZ)
+            if exist('cloud.errXYZ','var')
                 xyz = cloud.XYZ-errXYZ;
             else
                 xyz = cloud.XYZ;
