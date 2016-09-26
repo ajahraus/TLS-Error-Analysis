@@ -12,6 +12,7 @@ classdef Scanner
         regParamVarCovar
         
     end
+    
     methods
         function obj = Scanner(loc,dir)
             % The Scanner class contains all relevant information about the
@@ -208,7 +209,7 @@ classdef Scanner
             
             
             % Calculate angle of incidence
-%             incidence = zeros(size(RTA,1),1);
+            %             incidence = zeros(size(RTA,1),1);
             
             %             for i = 1:length(incidence)
             %                 incidence(i) = acos(dot(n, -[cos(RTA(i,2)).*cos(RTA(i,3)),sin(RTA(i,2)).*cos(RTA(i,3)), sin(RTA(i,3))]));
@@ -435,7 +436,7 @@ classdef Scanner
             end
             
         end
-                
+        
         function cellArray = VarianceCalculationSphereCell(obj, cloud, sphere)
             % This process calculates the variance of the points on the
             % surface of a sphere. Since the angle of incidence of the
@@ -518,6 +519,7 @@ classdef Scanner
                 
                 cellArray{i} = C_x;
             end
+        end
         
         function AllClouds = BulkScanPlanes(obj, name)
             % obj.BulkScanPlanes(name) or obj.BulkScanPlanes(planes)
@@ -568,7 +570,7 @@ classdef Scanner
                 
                 terrRTA = [terrRTA; tempCloud.errRTA];
                 terrXYZ = [terrXYZ; tempCloud.errXYZ];
-
+                
                 clear tempCloud
             end
             
@@ -884,7 +886,7 @@ classdef Scanner
                         updatedScans(i).regParamVarCovar = C_x(1+((i-1)*6):6+((i-1)*6),1+((i-1)*6):6+((i-1)*6));
                     elseif i > homeScanIndex
                         j = i-1;
-                        updatedScans(i).regParams = params(1+((j-1)*6):6+((j-1)*6));                        
+                        updatedScans(i).regParams = params(1+((j-1)*6):6+((j-1)*6));
                         updatedScans(i).regParamVarCovar = C_x(1+((j-1)*6):6+((j-1)*6),1+((j-1)*6):6+((j-1)*6));
                     end
                     
@@ -901,7 +903,6 @@ classdef Scanner
             part = ang + (2*pi * (ang < -pi));
             unwrapped = part - (2*pi * (part>pi) );
         end
-        
-        
     end
 end
+

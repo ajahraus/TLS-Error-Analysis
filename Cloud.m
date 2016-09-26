@@ -659,7 +659,7 @@ classdef Cloud
                     
                     subw(3) = dnom+zc;
                     
-                    A = [A;subA]
+                    A = [A;subA];
                     
                     w = [w;subw];
                 end
