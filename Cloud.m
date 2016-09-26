@@ -34,7 +34,7 @@ classdef Cloud
             % observation.
             %
             % cloud1 = Cloud(xyz, 'xyz'); cloud1 = Cloud(xyz, 'localxyz')
-            % No global coordinates are calculated, and thes scan
+            % No global coordinates are calculated, and the scan
             % property is left blank, but the spherical coordinates are
             % calucaled.
             %
@@ -165,7 +165,7 @@ classdef Cloud
             % This may need some adjusting
             % If the provided scan also has registration parameters,
             % calculate the coordinates of the registered xyz points.
-            if obj.scan.regParams ~= zeros(6,1)
+            if exist(obj.scan,'var') && obj.scan.regParams ~= zeros(6,1)
                 obj.regXYZ = (rotz(obj.scan.regParams(6))*...
                     roty(obj.scan.regParams(5))*rotx(obj.scan.regParams(4))*...
                     (obj.XYZ') + repmat(obj.scan.regParams(1:3),1,size(obj.XYZ,1)))';
@@ -222,9 +222,9 @@ classdef Cloud
             if length(varargin)>2
                 if size(varargin) == [1,3];
                     col = varargin{3};
-                else
-                    col = [0,0,1];
                 end
+            else
+                col = [0,0,1];
             end
             
             plot3(data(:,1),data(:,2), data(:,3), '.','Color',col)
@@ -441,6 +441,125 @@ classdef Cloud
             % sphere class, the center of the cloud according to the radius
             % of the sphere class is estimated, along with the variance of
             % the xyz position.
+            
+            xyz = obj.XYZ;
+            sphereCenterCloud = Cloud(sphere.center,obj.scan,'GlobalXYZ');
+            TrueCenter = sphereCenterCloud.XYZ;
+            
+            % contrain the radius to the known value
+            rcon = sphere.radius;
+            
+            % 1mm std for the radius of targets
+            sd = 0.001;
+            
+            n_pt_obs=max(size(xyz));
+            
+            if (n_pt_obs <= 3)
+                converged=0;
+                x0=nan(4,1);
+                center = x0(1:3);
+                variance = center;
+                disp('Sphere Fit: Insufficient number of Points')
+                return
+            end
+            
+            % circle fit
+            tol=1e-4;
+            max_iter=12;
+            
+            xc= TrueCenter(1) + (randn*sphere.radius*0.05);
+            yc= TrueCenter(2)+ (randn*sphere.radius*0.05);
+            zc= TrueCenter(3)+ (randn*sphere.radius*0.05);
+            
+            if rcon > 0
+                r=rcon;
+                wt=1/sd^2;
+            else
+                r=max(range(xyz))/2;
+            end
+            
+            % order: xc yc zc r
+            C_L = zeros(size(obj.XYZ,1));
+            x0=[ xc yc zc r ]';
+            
+            % This calculation of the observation variance may need some
+            % theoretical backing up.
+            
+            %             for i = 1:size(obj.XYZ,1);
+            %                 C_L(i,i) = sum(obj.varXYZ(i,:));
+            %             end
+            
+            C_L = diag(sum(obj.varXYZ,2));
+            C_L_inv = pinv(C_L);
+            
+            converged=0;
+            for i=1:max_iter
+                A=zeros(n_pt_obs,4);
+                w=zeros(n_pt_obs,1);
+                
+                xc=x0(1);
+                yc=x0(2);
+                zc=x0(3);
+                r=x0(4);
+                
+                for j=1:n_pt_obs
+                    x=xyz(j,1);
+                    y=xyz(j,2);
+                    z=xyz(j,3);
+                    
+                    dx=x-xc;
+                    dy=y-yc;
+                    dz=z-zc;
+                    
+                    A(j,1)=-2*dx;
+                    A(j,2)=-2*dy;
+                    A(j,3)=-2*dz;
+                    A(j,4)=-2*r;
+                    
+                    w(j)=dx^2+dy^2+dz^2-r^2;
+                end
+                
+                N=A'*C_L_inv*A;
+                U=A'*C_L_inv*w;
+                % add radius constraint
+                if (rcon > 0)
+                    N(4,4)=N(4,4)+wt;
+                    U(4,1)=U(4,1)+wt*(r-rcon);
+                end
+                
+                % check for singularity
+                rc=rcond(N);
+                if ( (rc < eps) || isnan(rc) )
+                    return
+                end
+                %[i  cond(A'*A) rcond(A'*A)]
+                
+                dx=-inv(N)*U;
+                x0=x0+dx;
+                
+                %[i dx']
+                
+                if (max(abs(dx)) < tol)
+                    converged=1;
+                    break
+                end
+            end
+            center = x0(1:3);
+            variance = diag(pinv(N(1:3,1:3)));
+            
+            if converged == 0
+                error('Sphere Fit: Failed to converge')
+            end
+        end
+        
+        function [center, variance] = modelSphereAdvanced(obj,sphere)
+            % Assuming the cloud is spherical in nature, given an input
+            % sphere class, the center of the cloud according to the radius
+            % of the sphere class is estimated, along with the variance of
+            % the xyz position.
+            % This 'Advanced' version of the sphere model function attempts
+            % to be more rigorous by including the co-variances between
+            % the object point coordinates. 
             
             xyz = obj.XYZ;
             sphereCenterCloud = Cloud(sphere.center,obj.scan,'GlobalXYZ');
