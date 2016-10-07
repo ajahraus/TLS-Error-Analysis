@@ -520,6 +520,7 @@ classdef Scanner
                 
                 cellArray{i} = C_x;
             end
+        end
         
         function AllClouds = BulkScanPlanes(obj, name)
             % obj.BulkScanPlanes(name) or obj.BulkScanPlanes(planes)
@@ -870,8 +871,9 @@ classdef Scanner
                     disp('Registration converged')
                 end
             end
-            
-            C_x = N^-1;
+            v = A*delta_x + misclosure;
+            aposVarFactor = v'*C_L^-1*v/( size(C_L,1)-length(delta_x));
+            C_x = aposVarFactor*N^-1;
             
             
             

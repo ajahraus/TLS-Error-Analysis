@@ -6,14 +6,15 @@ clc
 newClouds = ScanAndRegisterFromFiles('kuukpak scan models.txt','kuukpak planar model.txt','kuukpak sphere models.txt',1);
 
 %% Plot Clouds in common coodinate system
-figure, hold on
-cols = rand(length(newClouds),3);
-for i = 1:length(newClouds)
-    newClouds(i).plotCloud3D('reg','old',cols(i,:));
+if 0
+    figure, hold on
+    cols = rand(length(newClouds),3);
+    for i = 1:length(newClouds)
+        newClouds(i).plotCloud3D('reg','old',cols(i,:));
+    end
+    axis equal
+    title('Registered Coordinates')
 end
-axis equal
-title('Registered Coordinates')
-
 %%
 for i = 1:length(newClouds)
     disp(['Cloud number: ', num2str(i)])
