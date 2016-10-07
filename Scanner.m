@@ -386,7 +386,9 @@ classdef Scanner
             for i = 1:length(internalAngle)
                 topI = dot(xyz(i,:),SC);
                 bottomI = norm(xyz(i,:))*norm(SC);
-                
+                % This is so much easier to understand formulated like so:
+                % topI = xyz(i,:)/norm(xyz(i,:);
+                % bottomI = SC/norm(SC);
                 internalAngle(i) = acos(topI/bottomI);
             end
             
